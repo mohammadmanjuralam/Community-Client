@@ -8,8 +8,9 @@ import {
   signInWithPopup,
   signOut,
 } from "firebase/auth";
-import { auth } from "../../Firebase/firebase.config";
+
 import AuthContext from "../AuthCOntext/AuthContext";
+import { auth } from "../../firebase config/firebase.config";
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -30,9 +31,9 @@ const AuthProvider = ({ children }) => {
     setLoading(true);
     return signInWithPopup(auth, googleProvider);
   };
-  const userSignOut = () => {
+  const userSignOut = (email) => {
     setLoading(true);
-    return signOut(auth);
+    return signOut(auth, email);
   };
 
   useEffect(() => {
