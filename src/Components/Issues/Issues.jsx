@@ -10,7 +10,7 @@ const Issues = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:3000/issues")
+    fetch("https://community-api-server.vercel.app/issues")
       .then((res) => res.json())
       .then((data) => {
         setIssues(data);
@@ -46,9 +46,9 @@ const Issues = () => {
             <button
               onClick={() => {
                 if (user) {
-                  navigate(`/issues/${issue._id}`); // লগিন থাকলে Details page
+                  navigate(`/issues/${issue._id}`); 
                 } else {
-                  navigate("/login"); // লগিন না থাকলে Login page
+                  navigate("/login"); 
                 }
               }}
               className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition"

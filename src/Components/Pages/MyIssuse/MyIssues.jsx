@@ -15,12 +15,12 @@ const MyIssues = () => {
     document.title = "My Issues - Community Cleanliness Portal";
   }, []);
 
-  // Fetch user-specific issues
+  // Fetch user
   useEffect(() => {
     if (!user?.email) return;
 
     setLoading(true);
-    fetch(`http://localhost:3000/my-issues?email=${user.email}`)
+    fetch(`https://community-api-server.vercel.app/my-issues?email=${user.email}`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) setMyIssues(data);
@@ -46,7 +46,7 @@ const MyIssues = () => {
       status: form.status.value,
     };
 
-    // Check if any field changed
+ 
     const isChanged =
       updatedIssue.title !== selectedIssue.title ||
       updatedIssue.category !== selectedIssue.category ||
@@ -65,7 +65,7 @@ const MyIssues = () => {
       return;
     }
 
-    fetch(`http://localhost:3000/issues/${selectedIssue._id}`, {
+    fetch(`https://community-api-server.vercel.app/${selectedIssue._id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updatedIssue),
@@ -108,7 +108,7 @@ const MyIssues = () => {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(`http://localhost:3000/issues/${id}`, { method: "DELETE" })
+        fetch(`https://community-api-server.vercel.app/${id}`, { method: "DELETE" })
           .then((res) => res.json())
           .then((data) => {
             if (data.deletedCount > 0) {

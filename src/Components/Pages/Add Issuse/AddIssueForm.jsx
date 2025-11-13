@@ -25,7 +25,7 @@ const AddIssueForm = () => {
       email: user.email,
     };
 
-    fetch("http://localhost:3000/issues", {
+    fetch("https://community-api-server.vercel.app/issues", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(issueData),

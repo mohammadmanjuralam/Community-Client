@@ -19,7 +19,7 @@ const MyContribution = () => {
     if (!user?.email) return;
 
     setLoading(true);
-    fetch(`http://localhost:3000/contributions?email=${user.email}`)
+    fetch(`https://community-api-server.vercel.app/contributions?email=${user.email}`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) setContributions(data);

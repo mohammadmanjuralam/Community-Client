@@ -18,7 +18,7 @@ const IssueDetails = () => {
   }, []);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/issues/${id}`)
+    fetch(`https://community-api-server.vercel.app/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setIssue(data);
@@ -66,7 +66,7 @@ const IssueDetails = () => {
       additionalInfo: form.additionalInfo.value,
     };
 
-    fetch("http://localhost:3000/contributions", {
+    fetch("https://community-api-server.vercel.app/contributions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(contributionData),

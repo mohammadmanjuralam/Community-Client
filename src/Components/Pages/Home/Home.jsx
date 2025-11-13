@@ -14,7 +14,7 @@ const Home = () => {
 
   //Fetch 6 recent issues
   useEffect(() => {
-    fetch("http://localhost:3000/issues-limit")
+    fetch("https://community-api-server.vercel.app/issues-limit")
       .then((res) => res.json())
       .then((data) => {
         console.log("Fetched issues:", data);
@@ -25,7 +25,7 @@ const Home = () => {
 
   //Fetch stats
   useEffect(() => {
-    fetch("http://localhost:3000/stats")
+    fetch("https://community-api-server.vercel.app/stats")
       .then((res) => res.json())
       .then((data) => setStats(data))
       .catch(() => setStats({ users: 120, resolved: 35, pending: 15 })); // fallback
@@ -36,7 +36,7 @@ const Home = () => {
       <Banner></Banner>
 
       {/* 🗂 Category Section */}
-      <div className="mt-10 max-w-6xl mx-auto">
+      <div className="mt-10 max-w-6xl px-5 bg-orange-300 mx-auto border-2">
         <h2 className="text-3xl font-bold text-white text-center mb-6">
           Issue Categories
         </h2>
@@ -61,16 +61,16 @@ const Home = () => {
           ].map((cat, idx) => (
             <div
               key={idx}
-              className="card bg-base-100 shadow-xl hover:shadow-2xl transition"
+              className=" bg-base-100 shadow-xl hover:shadow-2xl transition"
             >
               <figure>
                 <img
                   src={cat.img}
                   alt={cat.name}
-                  className="h-40 w-full object-cover"
+                  className="h-20 w-full object-cover rounded-[10px]"
                 />
               </figure>
-              <div className="card-body text-center">
+              <div className="card-body bg-orange-300 text-center">
                 <h3 className="font-bold text-lg">{cat.name}</h3>
               </div>
             </div>

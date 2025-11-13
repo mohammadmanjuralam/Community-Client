@@ -9,7 +9,7 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // যদি user protected route থেকে আসে
+  
   const from = location.state?.from?.pathname || "/";
 
   useEffect(() => {
@@ -29,7 +29,7 @@ const Login = () => {
           showConfirmButton: false,
           timer: 1500,
         });
-        navigate(from, { replace: true }); // redirect
+        navigate(from, { replace: true }); 
       })
       .catch((err) => {
         setErrorMsg(err.message);
@@ -45,7 +45,7 @@ const Login = () => {
           showConfirmButton: false,
           timer: 1500,
         });
-        navigate(from, { replace: true }); // redirect
+        navigate(from, { replace: true }); 
       })
       .catch((err) => setErrorMsg(err.message));
   };

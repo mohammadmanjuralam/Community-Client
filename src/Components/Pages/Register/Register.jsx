@@ -24,7 +24,7 @@ const Register = () => {
           uid: result.user.uid,
         };
 
-        fetch("http://localhost:3000/users", {
+        fetch("https://community-api-server.vercel.app/users", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newUser),
@@ -76,7 +76,7 @@ const Register = () => {
         console.log("User created:", user);
 
         const newUser = { name, email, photo, uid: user.uid };
-        fetch("http://localhost:3000/users", {
+        fetch("https://community-api-server.vercel.app/users", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newUser),

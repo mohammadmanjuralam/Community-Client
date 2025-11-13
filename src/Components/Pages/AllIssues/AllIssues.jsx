@@ -14,7 +14,7 @@ const AllIssues = () => {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:3000/issues")
+    fetch("https://community-api-server.vercel.app/issues")
       .then((res) => res.json())
       .then((data) => {
         setIssues(data);
