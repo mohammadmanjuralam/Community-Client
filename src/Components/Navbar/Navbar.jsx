@@ -23,9 +23,15 @@ const Navbar = () => {
       <li>
         <NavLink to="/">Home</NavLink>
       </li>
-      <li>
-        <NavLink to="/issues">Issues</NavLink>
-      </li>
+      {user ? (
+        <li>
+          <NavLink to="/AllIssues">All Issues</NavLink>
+        </li>
+      ) : (
+        <li>
+          <NavLink to="/issues">Issues</NavLink>
+        </li>
+      )}
 
       {user ? (
         <>
@@ -33,7 +39,7 @@ const Navbar = () => {
             <NavLink to="/addIssues">Add Issues</NavLink>
           </li>
           <li>
-            <NavLink to="/myIssues">My Issues</NavLink>
+            <NavLink to="/my-issues">My Issues</NavLink>
           </li>
           <li>
             <NavLink to="/myContribution">My Contribution</NavLink>

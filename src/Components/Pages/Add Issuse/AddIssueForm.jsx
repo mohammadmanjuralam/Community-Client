@@ -1,63 +1,97 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
-import Swal from "sweetalert2"; // SweetAlert2 import
+import Swal from "sweetalert2";
+import AuthContext from "../../AuthCOntext/AuthContext";
 
 const AddIssueForm = () => {
+  const { user } = useContext(AuthContext); 
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     title: "",
     category: "",
     location: "",
     description: "",
     image: "",
+    email: "",
     amount: "",
-    status: "ongoing",
-    email: "user@example.com", // replace later with logged-in user email
   });
 
+  // handle input change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await axios.post("http://localhost:3000/issues", formData);
 
-      // ✅ SweetAlert success
+    // validation: user must be logged in
+    if (!user?.email) {
       Swal.fire({
-        icon: "success",
-        title: "Issue Added!",
-        text: "Your issue has been successfully submitted.",
-        timer: 2000,
-        showConfirmButton: false,
+        icon: "warning",
+        title: "Please Login First",
+        text: "You must be logged in to submit an issue.",
+        confirmButtonColor: "#3085d6",
       });
+      return;
+    }
 
-      setFormData({
-        title: "",
-        category: "",
-        location: "",
-        description: "",
-        image: "",
-        amount: "",
-        status: "ongoing",
-        email: "user@example.com",
-      });
+    // make new issue object
+    const issueData = {
+      ...formData,
+      email: user.email,
+      status: "ongoing",
+    };
+
+    console.log("Sending issue data:", issueData);
+
+    try {
+      setLoading(true);
+      const res = await axios.post("http://localhost:3000/issues", issueData);
+
+      if (res.data.insertedId || res.status === 201) {
+        Swal.fire({
+          icon: "success",
+          title: "Issue Added Successfully!",
+          text: "Your issue has been submitted.",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+
+        // reset form
+        setFormData({
+          title: "",
+          category: "",
+          location: "",
+          description: "",
+          image: "",
+          email: "",
+          amount: "",
+        });
+      } else {
+        throw new Error("Issue could not be added");
+      }
     } catch (error) {
-      console.error(error);
-
-      // ❌ SweetAlert error
+      console.error("Error adding issue:", error);
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "Something went wrong! Please try again.",
+        text: "Something went wrong while submitting your issue!",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg mt-6">
-      <h2 className="text-2xl font-bold mb-4">Add New Issue</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="max-w-3xl mx-auto bg-white shadow-xl rounded-2xl p-8 mt-10 border">
+      <h2 className="text-3xl font-bold mb-6 text-center text-blue-600">
+        Report a New Issue
+      </h2>
+
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Title */}
         <div>
           <label className="block mb-1 font-semibold">Title</label>
           <input
@@ -71,6 +105,7 @@ const AddIssueForm = () => {
           />
         </div>
 
+        {/* Category */}
         <div>
           <label className="block mb-1 font-semibold">Category</label>
           <select
@@ -90,6 +125,7 @@ const AddIssueForm = () => {
           </select>
         </div>
 
+        {/* Location */}
         <div>
           <label className="block mb-1 font-semibold">Location</label>
           <input
@@ -97,24 +133,26 @@ const AddIssueForm = () => {
             name="location"
             value={formData.location}
             onChange={handleChange}
-            placeholder="Enter location"
+            placeholder="Enter location (e.g. Mirpur 10, Dhaka)"
             className="input input-bordered w-full"
             required
           />
         </div>
 
+        {/* Description */}
         <div>
           <label className="block mb-1 font-semibold">Description</label>
           <textarea
             name="description"
             value={formData.description}
             onChange={handleChange}
-            placeholder="Describe the issue"
+            placeholder="Describe the issue clearly..."
             className="textarea textarea-bordered w-full"
             required
           ></textarea>
         </div>
 
+        {/* Image */}
         <div>
           <label className="block mb-1 font-semibold">Image URL</label>
           <input
@@ -122,11 +160,25 @@ const AddIssueForm = () => {
             name="image"
             value={formData.image}
             onChange={handleChange}
-            placeholder="Enter image URL"
+            placeholder="Paste image URL"
+            className="input input-bordered w-full"
+          />
+        </div>
+        {/* email */}
+        <div>
+          <label className="block mb-1 font-semibold">Email</label>
+          <input
+            type="email"
+            name="email"
+            readOnly
+            value={user.email}
+            onChange={handleChange}
+            placeholder="Your email"
             className="input input-bordered w-full"
           />
         </div>
 
+        {/* Amount */}
         <div>
           <label className="block mb-1 font-semibold">
             Suggested Fix Budget
@@ -136,14 +188,19 @@ const AddIssueForm = () => {
             name="amount"
             value={formData.amount}
             onChange={handleChange}
-            placeholder="Enter amount"
+            placeholder="Enter estimated budget (e.g. 500)"
             className="input input-bordered w-full"
             required
           />
         </div>
 
-        <button type="submit" className="btn btn-primary w-full mt-4">
-          Submit Issue
+        {/* Submit */}
+        <button
+          type="submit"
+          className="btn btn-primary w-full mt-4"
+          disabled={loading}
+        >
+          {loading ? "Submitting..." : "Submit Issue"}
         </button>
       </form>
     </div>

@@ -1,0 +1,11 @@
+.backdrop {
+  background-color: rgba(255, 255, 255, 0.2); /* translucent */
+  backdrop-filter: blur(10px); /* blur effect */
+  -webkit-backdrop-filter: blur(10px); /* Safari support */
+  border-radius: 20px;
+  padding: 40px;
+  width: 300px;
+  margin: 50px auto;
+  text-align: center;
+  color: #fff;
+}

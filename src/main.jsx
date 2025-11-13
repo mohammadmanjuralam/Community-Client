@@ -8,6 +8,10 @@ import AuthProvider from "./Components/AuthProvider/AuthProvider.jsx";
 import Login from "./Components/Pages/Login/Login.jsx";
 import "./index.css";
 import Register from "./Components/Pages/Register/Register.jsx";
+import AddIssueForm from "./Components/Pages/Add Issuse/AddIssueForm.jsx";
+import AllIssuse from "./Components/Pages/All Issuse/AllIssuse.jsx";
+import MyIssues from "./Components/Pages/MyIssuse/MyIssues.jsx";
+import IssueDetails from "./Components/Pages/IssuseDetails/IssueDetails.jsx";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +29,22 @@ const router = createBrowserRouter([
       {
         path: "register",
         Component: Register,
+      },
+      {
+        path: "addIssues",
+        Component: AddIssueForm,
+      },
+      {
+        path: "AllIssues",
+        Component: AllIssuse,
+      },
+      {
+        path: "my-issues",
+        Component: MyIssues,
+      },
+      {
+        path: "issues/:id",
+        Component: IssueDetails,
       },
     ],
   },
