@@ -4,7 +4,6 @@ import Swal from "sweetalert2";
 import Loading from "../Loading/Loading";
 import "./MyIssues.css";
 import Marquee from "react-fast-marquee";
-import { Link, Navigate } from "react-router";
 
 const MyIssues = () => {
   const { user } = useContext(AuthContext);
@@ -161,17 +160,8 @@ const MyIssues = () => {
                     </span>
                   </td>
                   <td>
-                    <div className="flex gap-2 flex-col">
-                      {/* 🔵 Details Button */}
-                      <Link
-                        to="/issues/:id"
-                        onClick={() => Navigate(`/issues/${issue._id}`)}
-                        className="btn btn-sm btn-outline btn-info"
-                      >
-                        Details
-                      </Link>
-
-                      {/* 🟢 Update Button */}
+                    <div className="flex gap-2 flex-col lg:flex-row">
+                      {/*  Update Button */}
                       <button
                         className="btn btn-sm btn-success"
                         onClick={() => {
@@ -182,7 +172,7 @@ const MyIssues = () => {
                         Update
                       </button>
 
-                      {/* 🔴 Delete Button */}
+                      {/*  Delete Button */}
                       <button
                         className="btn btn-sm btn-error"
                         onClick={() => handleDelete(issue._id)}

@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import Banner from "../../Banner/Banner";
 
-// 🧩 Home Page
+// Home Page
 const Home = () => {
   const [recentIssues, setRecentIssues] = useState([]);
   const [stats, setStats] = useState({ users: 0, resolved: 0, pending: 0 });
   const navigate = useNavigate();
 
-  // 🟢 Fetch 6 recent issues
+  //Fetch 6 recent issues
   useEffect(() => {
-    fetch("http://localhost:3000/issues")
+    fetch("http://localhost:3000/issues-limit")
       .then((res) => res.json())
       .then((data) => {
         console.log("Fetched issues:", data);
@@ -18,7 +19,7 @@ const Home = () => {
       .catch((err) => console.error(err));
   }, []);
 
-  // 🟢 Fetch stats (optional)
+  //Fetch stats
   useEffect(() => {
     fetch("http://localhost:3000/stats")
       .then((res) => res.json())
@@ -28,56 +29,7 @@ const Home = () => {
 
   return (
     <div className="text-black">
-      {/* 🏞 Banner Section */}
-      <div className="carousel w-full rounded-2xl mt-4">
-        <div id="slide1" className="carousel-item relative w-full">
-          <img
-            src="https://i.ibb.co.com/0RD05vWw/download-6.jpg"
-            className="w-full h-[400px] object-cover"
-            alt="Garbage Issue"
-          />
-          <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
-            <a href="#slide3" className="btn btn-circle">
-              ❮
-            </a>
-            <a href="#slide2" className="btn btn-circle">
-              ❯
-            </a>
-          </div>
-        </div>
-
-        <div id="slide2" className="carousel-item relative w-full">
-          <img
-            src="https://i.ibb.co.com/20GTKKKr/download-5.jpg"
-            className="w-full h-[400px] object-cover"
-            alt="Community Cleaning"
-          />
-          <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
-            <a href="#slide1" className="btn btn-circle">
-              ❮
-            </a>
-            <a href="#slide3" className="btn btn-circle">
-              ❯
-            </a>
-          </div>
-        </div>
-
-        <div id="slide3" className="carousel-item relative w-full">
-          <img
-            src="https://i.ibb.co.com/R44y6RgT/65-buildings-between-Jinsi-Lakshmibai-Pratima-to-be-trimmed-for-road-widening.jpg"
-            className="w-full h-[400px] object-cover"
-            alt="Sustainability"
-          />
-          <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
-            <a href="#slide2" className="btn btn-circle">
-              ❮
-            </a>
-            <a href="#slide1" className="btn btn-circle">
-              ❯
-            </a>
-          </div>
-        </div>
-      </div>
+      <Banner></Banner>
 
       {/* 🗂 Category Section */}
       <div className="mt-10 max-w-6xl mx-auto">
@@ -122,7 +74,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* 🟠 Recent Complaints Section */}
+      {/* Recent Complaints Section */}
       <section className="my-12 px-4">
         <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">
           Recent Complaints

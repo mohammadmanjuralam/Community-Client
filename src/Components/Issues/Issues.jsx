@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router";
 
-const AllIssuse = () => {
+const Issues = () => {
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -18,8 +18,6 @@ const AllIssuse = () => {
         setLoading(false);
       });
   }, []);
-
-
 
   if (loading) return <p>Loading...</p>;
 
@@ -41,8 +39,6 @@ const AllIssuse = () => {
             <p className="text-sm">Budget: {issue.amount} ৳</p>
 
             {/*  Details Button */}
-   
-
 
             <button
               onClick={() => navigate(`/issues/${issue._id}`)}
@@ -57,4 +53,4 @@ const AllIssuse = () => {
   );
 };
 
-export default AllIssuse;
+export default Issues;

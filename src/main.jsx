@@ -12,6 +12,7 @@ import AddIssueForm from "./Components/Pages/Add Issuse/AddIssueForm.jsx";
 import AllIssuse from "./Components/Pages/All Issuse/AllIssuse.jsx";
 import MyIssues from "./Components/Pages/MyIssuse/MyIssues.jsx";
 import IssueDetails from "./Components/Pages/IssuseDetails/IssueDetails.jsx";
+import Issues from "./Components/Issues/Issues.jsx";
 
 const router = createBrowserRouter([
   {
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
       {
         path: "issues/:id",
         Component: IssueDetails,
+      },
+      {
+        path: "allIssues",
+        Component: Issues,
       },
     ],
   },
