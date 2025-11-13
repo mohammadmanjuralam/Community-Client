@@ -25,24 +25,24 @@ const Navbar = () => {
       </li>
       {user ? (
         <li>
-          <NavLink to="/AllIssues">All Issues</NavLink>
+          <NavLink to="/all-issues">All Issues</NavLink>
         </li>
       ) : (
         <li>
-          <NavLink to="/allIssues">Issues</NavLink>
+          <NavLink to="/all-Issues">Issues</NavLink>
         </li>
       )}
 
       {user ? (
         <>
           <li>
-            <NavLink to="/addIssues">Add Issues</NavLink>
+            <NavLink to="/add-issues">Add Issues</NavLink>
           </li>
           <li>
             <NavLink to="/my-issues">My Issues</NavLink>
           </li>
           <li>
-            <NavLink to="/myContribution">My Contribution</NavLink>
+            <NavLink to="/my-contributions">My Contribution</NavLink>
           </li>
           <li>
             <FaRegUserCircle />

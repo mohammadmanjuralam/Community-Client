@@ -1,203 +1,102 @@
-import React, { useState, useContext } from "react";
-import axios from "axios";
+import React, { useContext, useState } from "react";
 import Swal from "sweetalert2";
 import AuthContext from "../../AuthCOntext/AuthContext";
 
 const AddIssueForm = () => {
-  const { user } = useContext(AuthContext); 
+  const { user } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
 
-  const [formData, setFormData] = useState({
-    title: "",
-    category: "",
-    location: "",
-    description: "",
-    image: "",
-    email: "",
-    amount: "",
-  });
-
-  // handle input change
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  // handle form submit
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    // validation: user must be logged in
-    if (!user?.email) {
-      Swal.fire({
-        icon: "warning",
-        title: "Please Login First",
-        text: "You must be logged in to submit an issue.",
-        confirmButtonColor: "#3085d6",
-      });
-      return;
-    }
-
-    // make new issue object
     const issueData = {
-      ...formData,
-      email: user.email,
+      title: e.target.title.value,
+      category: e.target.category.value,
+      location: e.target.location.value,
+      description: e.target.description.value,
+      image: e.target.image.value,
+      amount: parseFloat(e.target.amount.value),
       status: "ongoing",
+      date: new Date().toISOString(),
+      email: user.email,
     };
 
-    console.log("Sending issue data:", issueData);
-
-    try {
-      setLoading(true);
-      const res = await axios.post("http://localhost:3000/issues", issueData);
-
-      if (res.data.insertedId || res.status === 201) {
+    fetch("http://localhost:3000/issues", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(issueData),
+    })
+      .then((res) => res.json())
+      .then(() => {
         Swal.fire({
           icon: "success",
-          title: "Issue Added Successfully!",
-          text: "Your issue has been submitted.",
+          title: "Issue Submitted",
+          text: "Your issue has been added successfully.",
           timer: 2000,
           showConfirmButton: false,
         });
-
-        // reset form
-        setFormData({
-          title: "",
-          category: "",
-          location: "",
-          description: "",
-          image: "",
-          email: "",
-          amount: "",
-        });
-      } else {
-        throw new Error("Issue could not be added");
-      }
-    } catch (error) {
-      console.error("Error adding issue:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Something went wrong while submitting your issue!",
-      });
-    } finally {
-      setLoading(false);
-    }
+        e.target.reset();
+      })
+      .catch(() =>
+        Swal.fire("Error", "Failed to submit issue. Try again!", "error")
+      )
+      .finally(() => setLoading(false));
   };
 
   return (
-    <div className="max-w-3xl mx-auto bg-white shadow-xl rounded-2xl p-8 mt-10 border">
-      <h2 className="text-3xl font-bold mb-6 text-center text-blue-600">
-        Report a New Issue
+    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-2xl shadow-lg">
+      <h2 className="text-3xl font-bold text-blue-700 mb-6">
+        Report New Issue
       </h2>
-
-      <form onSubmit={handleSubmit} className="space-y-5">
-        {/* Title */}
-        <div>
-          <label className="block mb-1 font-semibold">Title</label>
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            placeholder="Enter issue title"
-            className="input input-bordered w-full"
-            required
-          />
-        </div>
-
-        {/* Category */}
-        <div>
-          <label className="block mb-1 font-semibold">Category</label>
-          <select
-            name="category"
-            value={formData.category}
-            onChange={handleChange}
-            className="select select-bordered w-full"
-            required
-          >
-            <option value="">Select category</option>
-            <option value="Garbage">Garbage</option>
-            <option value="Illegal Construction">Illegal Construction</option>
-            <option value="Broken Public Property">
-              Broken Public Property
-            </option>
-            <option value="Road Damage">Road Damage</option>
-          </select>
-        </div>
-
-        {/* Location */}
-        <div>
-          <label className="block mb-1 font-semibold">Location</label>
-          <input
-            type="text"
-            name="location"
-            value={formData.location}
-            onChange={handleChange}
-            placeholder="Enter location (e.g. Mirpur 10, Dhaka)"
-            className="input input-bordered w-full"
-            required
-          />
-        </div>
-
-        {/* Description */}
-        <div>
-          <label className="block mb-1 font-semibold">Description</label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            placeholder="Describe the issue clearly..."
-            className="textarea textarea-bordered w-full"
-            required
-          ></textarea>
-        </div>
-
-        {/* Image */}
-        <div>
-          <label className="block mb-1 font-semibold">Image URL</label>
-          <input
-            type="text"
-            name="image"
-            value={formData.image}
-            onChange={handleChange}
-            placeholder="Paste image URL"
-            className="input input-bordered w-full"
-          />
-        </div>
-        {/* email */}
-        <div>
-          <label className="block mb-1 font-semibold">Email</label>
-          <input
-            type="email"
-            name="email"
-            readOnly
-            value={user.email}
-            onChange={handleChange}
-            placeholder="Your email"
-            className="input input-bordered w-full"
-          />
-        </div>
-
-        {/* Amount */}
-        <div>
-          <label className="block mb-1 font-semibold">
-            Suggested Fix Budget
-          </label>
-          <input
-            type="number"
-            name="amount"
-            value={formData.amount}
-            onChange={handleChange}
-            placeholder="Enter estimated budget (e.g. 500)"
-            className="input input-bordered w-full"
-            required
-          />
-        </div>
-
-        {/* Submit */}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input
+          type="text"
+          name="title"
+          placeholder="Issue Title"
+          className="input input-bordered w-full"
+          required
+        />
+        <select
+          name="category"
+          className="select select-bordered w-full"
+          required
+        >
+          <option value="">Select Category</option>
+          <option value="Garbage">Garbage</option>
+          <option value="Illegal Construction">Illegal Construction</option>
+          <option value="Broken Public Property">Broken Public Property</option>
+          <option value="Road Damage">Road Damage</option>
+        </select>
+        <input
+          type="text"
+          name="location"
+          placeholder="Location"
+          className="input input-bordered w-full"
+          required
+        />
+        <textarea
+          name="description"
+          placeholder="Description"
+          className="textarea textarea-bordered w-full"
+          required
+        />
+        <input
+          type="text"
+          name="image"
+          placeholder="Image URL"
+          className="input input-bordered w-full"
+        />
+        <input
+          type="number"
+          name="amount"
+          placeholder="Suggested Fix Budget"
+          className="input input-bordered w-full"
+          required
+        />
         <button
           type="submit"
-          className="btn btn-primary w-full mt-4"
+          className="btn btn-primary w-full"
           disabled={loading}
         >
           {loading ? "Submitting..." : "Submit Issue"}

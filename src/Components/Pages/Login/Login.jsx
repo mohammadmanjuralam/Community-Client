@@ -1,8 +1,10 @@
 import React, { use, useState } from "react";
 import "./LoginCss.css";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import AuthContext from "../../AuthCOntext/AuthContext";
 const Login = () => {
+  const navigate = useNavigate();
+  const from = location.state?.from?.pathname || "/";
   const [errorMsg, setErrorMsg] = useState("");
   const { signInUser, signInWithGoogle } = use(AuthContext);
   const handleLogin = (e) => {
@@ -14,6 +16,7 @@ const Login = () => {
       .then((result) => {
         console.log(result.user);
         setErrorMsg("");
+        navigate(from, { replace: true }); // redirect to original page
       })
       .catch((error) => {
         const errorMessage = error.message;

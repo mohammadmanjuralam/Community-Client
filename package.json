@@ -13,6 +13,8 @@
     "@tailwindcss/vite": "^4.1.17",
     "axios": "^1.13.2",
     "firebase": "^12.5.0",
+    "jspdf": "^3.0.3",
+    "jspdf-autotable": "^5.0.2",
     "lottie-react": "^2.4.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
