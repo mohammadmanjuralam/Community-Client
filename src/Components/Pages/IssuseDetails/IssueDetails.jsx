@@ -1,19 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router";
+import Swal from "sweetalert2";
+import AuthContext from "../../AuthCOntext/AuthContext";
 import Loading from "../Loading/Loading";
 
 const IssueDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
   const [issue, setIssue] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const [showContributionModal, setShowContributionModal] = useState(false);
+
+  useEffect(() => {
+    document.title = "Issues details - Community Cleanliness Portal";
+  }, []);
 
   useEffect(() => {
     fetch(`http://localhost:3000/issues/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setIssue(data);
-        console.log(data);
         setLoading(false);
       })
       .catch((err) => {
@@ -25,7 +33,7 @@ const IssueDetails = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-[60vh]">
-        <Loading></Loading>
+        <Loading />
       </div>
     );
   }
@@ -35,6 +43,48 @@ const IssueDetails = () => {
       <div className="text-center text-gray-500 mt-10">Issue not found.</div>
     );
   }
+
+  // Contribution Submit Handler
+  const handleContribution = (e) => {
+    e.preventDefault();
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    const form = e.target;
+    const contributionData = {
+      issueId: issue._id,
+      issueTitle: issue.title,
+      category: issue.category,
+      amount: parseFloat(form.amount.value),
+      name: form.name.value,
+      email: user.email,
+      phone: form.phone.value,
+      address: form.address.value,
+      date: new Date().toISOString(),
+      additionalInfo: form.additionalInfo.value,
+    };
+
+    fetch("http://localhost:3000/contributions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(contributionData),
+    })
+      .then((res) => res.json())
+      .then(() => {
+        Swal.fire({
+          icon: "success",
+          title: "Contribution Successful",
+          text: "Thank you for your contribution!",
+        });
+        setShowContributionModal(false);
+        form.reset();
+      })
+      .catch(() => {
+        Swal.fire("Error", "Failed to submit contribution", "error");
+      });
+  };
 
   return (
     <div className="max-w-4xl mx-auto mt-10 bg-white rounded-2xl shadow-xl overflow-hidden">
@@ -78,7 +128,96 @@ const IssueDetails = () => {
             ← Back
           </button>
         </div>
+
+        {/* Contribution Button */}
+        <div className="mt-6">
+          <button
+            onClick={() => {
+              if (!user) {
+                navigate("/login");
+              } else {
+                setShowContributionModal(true);
+              }
+            }}
+            className="btn btn-primary"
+          >
+            Pay Clean-Up Contribution
+          </button>
+        </div>
       </div>
+
+      {/* Contribution Modal */}
+      {showContributionModal && (
+        <dialog open className="modal">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg text-blue-600 mb-4">
+              Contribute to Issue
+            </h3>
+            <form onSubmit={handleContribution} className="space-y-3">
+              <input
+                type="text"
+                name="issueTitle"
+                value={issue.title}
+                readOnly
+                className="input input-bordered w-full"
+              />
+              <input
+                type="number"
+                name="amount"
+                placeholder="Amount"
+                className="input input-bordered w-full"
+                required
+              />
+              <input
+                type="text"
+                name="name"
+                placeholder="Your Name"
+                className="input input-bordered w-full"
+                required
+              />
+              <input
+                type="email"
+                name="email"
+                value={user.email}
+                readOnly
+                className="input input-bordered w-full"
+              />
+              <input
+                type="text"
+                name="phone"
+                placeholder="Phone Number"
+                className="input input-bordered w-full"
+                required
+              />
+              <input
+                type="text"
+                name="address"
+                placeholder="Address"
+                className="input input-bordered w-full"
+                required
+              />
+              <textarea
+                name="additionalInfo"
+                placeholder="Additional Info (optional)"
+                className="textarea textarea-bordered w-full"
+              ></textarea>
+
+              <div className="modal-action">
+                <button type="submit" className="btn btn-primary">
+                  Submit
+                </button>
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={() => setShowContributionModal(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+      )}
     </div>
   );
 };

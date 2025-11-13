@@ -10,6 +10,10 @@ const AllIssues = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    document.title = "All Issues - Community Cleanliness Portal";
+  }, []);
+
+  useEffect(() => {
     fetch("http://localhost:3000/issues")
       .then((res) => res.json())
       .then((data) => {

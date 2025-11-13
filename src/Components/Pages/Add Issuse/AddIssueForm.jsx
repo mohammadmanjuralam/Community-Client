@@ -1,10 +1,13 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import AuthContext from "../../AuthCOntext/AuthContext";
 
 const AddIssueForm = () => {
   const { user } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    document.title = "Add Issues - Community Cleanliness Portal";
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();

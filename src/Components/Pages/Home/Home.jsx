@@ -8,6 +8,10 @@ const Home = () => {
   const [stats, setStats] = useState({ users: 0, resolved: 0, pending: 0 });
   const navigate = useNavigate();
 
+  useEffect(() => {
+    document.title = "Home - Community Cleanliness Portal";
+  }, []);
+
   //Fetch 6 recent issues
   useEffect(() => {
     fetch("http://localhost:3000/issues-limit")

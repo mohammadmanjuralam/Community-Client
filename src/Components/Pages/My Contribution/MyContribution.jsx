@@ -1,127 +1,115 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import AuthContext from "../../AuthCOntext/AuthContext";
 import Loading from "../Loading/Loading";
-import Swal from "sweetalert2";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import Swal from "sweetalert2";
 
 const MyContribution = () => {
   const { user } = useContext(AuthContext);
   const [contributions, setContributions] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch user-specific contributions
+  useEffect(() => {
+    document.title = "My Contribution - Community Cleanliness Portal";
+  }, []);
+
+  // Fetch contributions for logged-in user
   useEffect(() => {
     if (!user?.email) return;
 
     setLoading(true);
-
     fetch(`http://localhost:3000/contributions?email=${user.email}`)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to fetch contributions");
-        }
-        return res.json();
-      })
+      .then((res) => res.json())
       .then((data) => {
-        setContributions(data);
-        setLoading(false);
+        if (Array.isArray(data)) setContributions(data);
+        else setContributions([]);
       })
       .catch((err) => {
-        console.error(err);
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Failed to load contributions",
-        });
-        setLoading(false);
-      });
+        console.error("Error fetching contributions:", err);
+        Swal.fire("Error", "Failed to load contributions", "error");
+        setContributions([]);
+      })
+      .finally(() => setLoading(false));
   }, [user?.email]);
 
-  // Download PDF report
-  const handleDownloadReport = () => {
-    if (contributions.length === 0) {
-      Swal.fire("No Data", "No contributions to download.", "info");
-      return;
+  // Download PDF report for a single contribution
+  const handleDownloadReport = (contribution) => {
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text("Contribution Report", 14, 22);
+
+    doc.setFontSize(12);
+    doc.text(`Contributor: ${contribution.name}`, 14, 32);
+    doc.text(`Email: ${contribution.email}`, 14, 40);
+    doc.text(`Phone: ${contribution.phone}`, 14, 48);
+    doc.text(`Address: ${contribution.address}`, 14, 56);
+    doc.text(`Issue Title: ${contribution.issueTitle}`, 14, 64);
+    doc.text(`Amount Paid: ৳${contribution.amount}`, 14, 72);
+    doc.text(`Date: ${new Date(contribution.date).toLocaleString()}`, 14, 80);
+
+    // Optional: additional info
+    if (contribution.additionalInfo) {
+      doc.text(`Additional Info: ${contribution.additionalInfo}`, 14, 88);
     }
 
-    const doc = new jsPDF();
-    doc.text("My Contributions Report", 14, 20);
-    const tableColumn = ["Issue Title", "Category", "Amount", "Date"];
-    const tableRows = [];
-
-    contributions.forEach((c) => {
-      const rowData = [
-        c.issueTitle,
-        c.category,
-        c.amount,
-        new Date(c.date).toLocaleDateString(),
-      ];
-      tableRows.push(rowData);
-    });
-
-    doc.autoTable(tableColumn, tableRows, { startY: 30 });
-    doc.save("my_contributions_report.pdf");
+    doc.save(`Contribution_${contribution.issueTitle}.pdf`);
   };
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-[60vh]">
+      <div className="flex justify-center items-center h-screen">
         <Loading />
       </div>
     );
   }
 
-  if (!contributions.length) {
-    return (
-      <div className="text-center text-gray-700 mt-10">
-        You have not made any contributions yet.
-      </div>
-    );
-  }
-
   return (
-    <div className="max-w-6xl mx-auto mt-10 p-6 bg-white rounded-2xl shadow-xl">
-      <h2 className="text-3xl font-bold text-blue-700 mb-6 text-center">
+    <div className="max-w-6xl mx-auto mt-10 p-4">
+      <h2 className="text-3xl font-bold mb-6 text-center text-blue-700">
         My Contributions
       </h2>
 
-      <div className="overflow-x-auto">
-        <table className="table-auto w-full border-collapse border border-gray-300 text-sm lg:text-base">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="border px-4 py-2 text-left">Issue Title</th>
-              <th className="border px-4 py-2 text-left">Category</th>
-              <th className="border px-4 py-2 text-left">Amount (৳)</th>
-              <th className="border px-4 py-2 text-left">Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {contributions.map((c) => (
-              <tr
-                key={c._id}
-                className="hover:bg-gray-50 transition-colors duration-200"
-              >
-                <td className="border px-4 py-2">{c.issueTitle}</td>
-                <td className="border px-4 py-2">{c.category}</td>
-                <td className="border px-4 py-2">{c.amount}</td>
-                <td className="border px-4 py-2">
-                  {new Date(c.date).toLocaleDateString()}
-                </td>
+      {contributions.length === 0 ? (
+        <p className="text-center text-gray-500 text-lg">
+          You have not made any contributions yet.
+        </p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="table-auto text-black w-full border-collapse border border-gray-300">
+            <thead>
+              <tr className="bg-gray-100 text-orange-700">
+                <th className="border p-2 text-left">Issue Title</th>
+                <th className="border p-2 text-left">Category</th>
+                <th className="border p-2 text-left">Amount Paid</th>
+                <th className="border p-2 text-left">Date</th>
+                <th className="border p-2 text-left">Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="mt-6 flex justify-end">
-        <button
-          onClick={handleDownloadReport}
-          className="btn bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-        >
-          Download Report
-        </button>
-      </div>
+            </thead>
+            <tbody>
+              {contributions.map((contribution) => (
+                <tr key={contribution._id} className=" bg-gray-100">
+                  <td className="border p-2">{contribution.issueTitle}</td>
+                  <td className="border p-2">{contribution.category}</td>
+                  <td className="border p-2">${contribution.amount}</td>
+                  <td className="border p-2">
+                    {new Date(contribution.date).toLocaleString()}
+                  </td>
+                  <td className="border p-2">
+                    <button
+                      onClick={() => handleDownloadReport(contribution)}
+                      className="bg-green-600 text-white px-4 py-1 rounded  transition"
+                    >
+                      Download Report
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };

@@ -11,6 +11,10 @@ const MyIssues = () => {
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+    document.title = "My Issues - Community Cleanliness Portal";
+  }, []);
+
   // Fetch user-specific issues
   useEffect(() => {
     if (!user?.email) return;
